@@ -25,8 +25,32 @@ helpers do
     Rack::Utils.secure_compare(sha1, signature)
   end
 
-  def analyze_payload(push)
+  def analyze_commit(url)
+    uri = URI.parse(url.sub("github.com", "api.github.com/repos").sub("commit", "commits"))
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    request = Net::HTTP::Get.new(uri.request_uri)
+    response = http.request(request)
+    commit = JSON.parse(response.body)
+    puts "Commit message: #{commit["commit"]["message"]}"
+    puts "Commit author: #{commit["commit"]["author"]["name"]}"
+    puts "Commit date: #{commit["commit"]["author"]["date"]}"
+    puts "Commit URL: #{commit["html_url"]}"
+    puts "Commit files: #{commit["files"]}"
     binding.pry
+  end
+
+  def analyze_payload(push)
+    commits = push["commits"]
+    commits.each do |commit|
+      repo = push["repository"]["full_name"]
+      commit_id = commit["id"]
+      url = commit["url"]
+      message = commit["message"]
+      author = commit["author"]["name"]
+      puts "New commit by #{author} with id #{commit_id} and message: #{message}"
+      analyze_commit(url)
+    end
   end
 end
 
