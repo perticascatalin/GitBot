@@ -11,6 +11,7 @@ file = File.read("./config.json")
 config = JSON.parse(file)
 
 SECRET = config["webhook_secret"]
+AUTH = config["github_token"]
 
 helpers do
   # Verifies the signature of a payload body against a given signature.
@@ -33,20 +34,23 @@ helpers do
     # Create the HTTP request
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    request = Net::HTTP::Post.new(url)
+    request = Net::HTTP::Post.new(uri)
     request["Accept"] = "application/vnd.github+json"
-
+    request["X-Github-Api-Version"] = "2022-11-28"
+    request["Authorization"] = AUTH
     files = commit["files"]
     files.each do |file|
       patch = file["patch"]
       filename = file["filename"]
       comment_body = 'Inspecting file ' + filename + ' for potential issues.'
+      position = patch.lines.first.split(/[^\d]/).select{|s| !s.empty?}.first.to_i
 
       # Request body
       request.body = {
         body: comment_body,
+        commit_id: commit["sha"],
         path: filename,
-        position: patch.to_i.abs
+        position: position
       }.to_json
 
       # Send the request
