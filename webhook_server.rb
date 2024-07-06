@@ -32,12 +32,12 @@ helpers do
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
     commit = JSON.parse(response.body)
-    puts "Commit message: #{commit["commit"]["message"]}"
-    puts "Commit author: #{commit["commit"]["author"]["name"]}"
-    puts "Commit date: #{commit["commit"]["author"]["date"]}"
-    puts "Commit URL: #{commit["html_url"]}"
-    puts "Commit files: #{commit["files"]}"
-    binding.pry
+    files = commit["files"]
+    files.each do |file|
+      patch = file["patch"]
+      puts "Patch: #{patch}"
+      binding.pry
+    end
   end
 
   def analyze_payload(push)
