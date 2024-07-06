@@ -7,6 +7,7 @@ file_count = {}
 file = File.read("./config.json")
 config = JSON.parse(file)
 
+# Just a random comment
 PAGES = config["pages_of_reviews"]
 
 for pg in 1..PAGES do

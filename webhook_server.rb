@@ -25,6 +25,47 @@ helpers do
     Rack::Utils.secure_compare(sha1, signature)
   end
 
+  def review_commit(url, commit)
+    uri = URI.parse(url.sub("github.com", "api.github.com/repos").sub("commit", "commits") + "/comments")
+    #   https://api.github.com/repos/OWNER/REPO/commits/COMMIT_SHA/comments \
+    # -d '{"body":"Great stuff","path":"file1.txt","position":4,"line":1}
+
+    # Create the HTTP request
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    request = Net::HTTP::Post.new(url)
+
+    files = commit["files"]
+    files.each do |file|
+      patch = file["patch"]
+      filename = file["filename"]
+      comment_body = 'Inspecting file ' + filename + ' for potential issues.'
+
+      # Request body
+      request.body = {
+        body: comment_body,
+        path: filename,
+        position: patch.to_i.abs
+      }.to_json
+
+      # Send the request
+      response = http.request(request)
+
+      # Check and print the response
+      if response.code.to_i == 201
+        puts "Comment posted successfully!"
+        comment = JSON.parse(response.body)
+        puts "Comment URL: #{comment['html_url']}"
+      else
+        puts "Failed to post comment: #{response.code}"
+        puts response.body
+      end
+      
+    end
+
+
+  end
+
   def analyze_commit(url)
     uri = URI.parse(url.sub("github.com", "api.github.com/repos").sub("commit", "commits"))
     http = Net::HTTP.new(uri.host, uri.port)
@@ -32,14 +73,18 @@ helpers do
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
     commit = JSON.parse(response.body)
-    files = commit["files"]
-    files.each do |file|
-      patch = file["patch"]
-      puts "Patch: #{patch}"
-      binding.pry
-    end
+    review_commit(url, commit)
   end
 
+  # Analyzes the payload of a push event.
+  #
+  # This method takes a push event payload as input and analyzes each commit in the payload.
+  # It retrieves information such as the repository name, commit ID, URL, message, and author.
+  # For each commit, it prints a message with the author, commit ID, and message, and then
+  # calls the `analyze_commit` method to perform further analysis on the commit.
+  #
+  # Parameters:
+  # @param push: A hash representing the push event payload.
   def analyze_payload(push)
     commits = push["commits"]
     commits.each do |commit|
