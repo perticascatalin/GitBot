@@ -34,6 +34,7 @@ helpers do
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     request = Net::HTTP::Post.new(url)
+    request["Accept"] = "application/vnd.github+json"
 
     files = commit["files"]
     files.each do |file|
@@ -49,6 +50,7 @@ helpers do
       }.to_json
 
       # Send the request
+      binding.pry
       response = http.request(request)
 
       # Check and print the response
