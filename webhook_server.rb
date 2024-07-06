@@ -26,10 +26,12 @@ helpers do
     Rack::Utils.secure_compare(sha1, signature)
   end
 
+  # Public: Posts review comments on a commit.
+  #
+  # url    - The URL of the commit to review.
+  # commit - The commit object containing information about the files to review.
   def review_commit(url, commit)
     uri = URI.parse(url.sub("github.com", "api.github.com/repos").sub("commit", "commits") + "/comments")
-    #   https://api.github.com/repos/OWNER/REPO/commits/COMMIT_SHA/comments \
-    # -d '{"body":"Great stuff","path":"file1.txt","position":4,"line":1}
 
     # Create the HTTP request
     http = Net::HTTP.new(uri.host, uri.port)
@@ -54,7 +56,6 @@ helpers do
       }.to_json
 
       # Send the request
-      binding.pry
       response = http.request(request)
 
       # Check and print the response
@@ -72,6 +73,10 @@ helpers do
 
   end
 
+  # Analyzes a commit by making a GET request to the GitHub API and reviewing the commit.
+  #
+  # @param url [String] The URL of the commit.
+  # @return [void]
   def analyze_commit(url)
     uri = URI.parse(url.sub("github.com", "api.github.com/repos").sub("commit", "commits"))
     http = Net::HTTP.new(uri.host, uri.port)
