@@ -49,8 +49,10 @@ helpers do
       start_position = patch.lines.first.split(/[^\d]/).select{|s| !s.empty?}.first.to_i
       # However, there can be several hunks in a file
       num_hunks = patch.lines.select{|l| l.start_with?("@@")}.count
+      # Need to remove end of file markers
+      num_eof = patch.lines.select{|l| l.start_with?("\\ No newline at end of file")}.count
       # This will place the comment at the end of the last hunk (since hunk markers also count as lines)
-      position = patch.lines.count - 1
+      position = patch.lines.count - num_eof - 1
 
       # Request body
       request.body = {
@@ -62,6 +64,7 @@ helpers do
 
       # Send the request
       response = http.request(request)
+      binding.pry
 
       # Check and print the response
       if response.code.to_i == 201

@@ -30,3 +30,5 @@ end
 
 user_count = user_count.sort_by {|key, value| -value}.to_h
 file_count = file_count.sort_by {|key, value| -value}.to_h
+
+binding.pry
