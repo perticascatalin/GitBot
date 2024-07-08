@@ -49,8 +49,8 @@ helpers do
       start_position = patch.lines.first.split(/[^\d]/).select{|s| !s.empty?}.first.to_i
       # However, there can be several hunks in a file
       num_hunks = patch.lines.select{|l| l.start_with?("@@")}.count
-      # This will place the comment at the end of the last hunk
-      position = patch.lines.count - num_hunks
+      # This will place the comment at the end of the last hunk (since hunk markers also count as lines)
+      position = patch.lines.count - 1
 
       # Request body
       request.body = {
