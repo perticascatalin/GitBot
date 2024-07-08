@@ -51,8 +51,8 @@ helpers do
       num_hunks = patch.lines.select{|l| l.start_with?("@@")}.count
       # Need to remove end of file markers
       num_eof = patch.lines.select{|l| l.start_with?("\\ No newline at end of file")}.count
-      # This will place the comment at the end of the last hunk
-      position = patch.lines.count - num_hunks - num_eof
+      # This will place the comment at the end of the last hunk)
+      position = patch.lines.count - 2 * num_eof - 1
 
       # Request body
       request.body = {
