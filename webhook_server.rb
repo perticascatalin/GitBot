@@ -54,25 +54,31 @@ helpers do
       # This will place the comment at the end of the last hunk)
       position = patch.lines.count - eof - 1
 
-      # Request body
-      request.body = {
-        body: comment_body,
-        commit_id: commit["sha"],
-        path: filename,
-        position: position
-      }.to_json
+      # One review per hunk
+      patch.lines.each_with_index do |line, index|
+        if line.start_with?("@@")
+          position = index + 1
+          # Request body
+          request.body = {
+            body: comment_body,
+            commit_id: commit["sha"],
+            path: filename,
+            position: position
+          }.to_json
 
-      # Send the request
-      response = http.request(request)
+          # Send the request
+          response = http.request(request)
 
-      # Check and print the response
-      if response.code.to_i == 201
-        puts "Comment posted successfully!"
-        comment = JSON.parse(response.body)
-        puts "Comment URL: #{comment['html_url']}"
-      else
-        puts "Failed to post comment: #{response.code}"
-        puts response.body
+          # Check and print the response
+          if response.code.to_i == 201
+            puts "Comment posted successfully!"
+            comment = JSON.parse(response.body)
+            puts "Comment URL: #{comment['html_url']}"
+          else
+            puts "Failed to post comment: #{response.code}"
+            puts response.body
+          end
+        end
       end
     end
   end
