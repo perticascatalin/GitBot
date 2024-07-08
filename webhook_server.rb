@@ -45,7 +45,12 @@ helpers do
       patch = file["patch"]
       filename = file["filename"]
       comment_body = 'Inspecting file ' + filename + ' for potential issues.'
-      position = patch.lines.first.split(/[^\d]/).select{|s| !s.empty?}.first.to_i
+      # Where the first hunk begins in the file
+      start_position = patch.lines.first.split(/[^\d]/).select{|s| !s.empty?}.first.to_i
+      # However, there can be several hunks in a file
+      num_hunks = patch.lines.select{|l| l.start_with?("@@")}.count
+      # This will place the comment at the end of the last hunk
+      position = patch.lines.count - num_hunks
 
       # Request body
       request.body = {
@@ -67,10 +72,7 @@ helpers do
         puts "Failed to post comment: #{response.code}"
         puts response.body
       end
-      
     end
-
-
   end
 
   # Analyzes a commit by making a GET request to the GitHub API and reviewing the commit.
