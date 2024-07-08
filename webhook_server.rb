@@ -57,7 +57,7 @@ helpers do
       # One review per hunk
       patch.lines.each_with_index do |line, index|
         if line.start_with?("@@")
-          position = index + 1
+          position = index
           # Request body
           request.body = {
             body: comment_body,
