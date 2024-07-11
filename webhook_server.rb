@@ -33,14 +33,18 @@ helpers do
     # Define the URL of your Python server
     url = URI.parse('http://localhost:8000')
 
-    # Create a new HTTP request object
-    http = Net::HTTP.new(url.host, url.port)
+    # Create a POST request
+    request = Net::HTTP::Post.new(url.path, { 'Content-Type' => 'application/json' })
 
-    # Create a GET request
-    request = Net::HTTP::Get.new(url.request_uri)
+    # Define the request body
+    request.body = hunks.to_json
+    binding.pry
 
     # Send the request and get the response
     response = http.request(request)
+
+    # Print the response body
+    puts response.body
 
     binding.pry
   end  
