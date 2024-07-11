@@ -66,6 +66,7 @@ helpers do
           current_hunk += "\n" + line
         end
       end
+      binding.pry
 
       # One review per hunk, add a comment after first line of each hunk
       patch.lines.each_with_index do |line, index|
@@ -104,11 +105,13 @@ helpers do
     uri = URI.parse(url.sub("github.com", "api.github.com/repos").sub("commit", "commits"))
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
+    # Random comment
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
     commit = JSON.parse(response.body)
     review_commit(url, commit)
   end
+
 
   # Analyzes the payload of a push event.
   #
@@ -132,6 +135,7 @@ helpers do
     end
   end
 end
+
 
 post '/webhook' do
   request.body.rewind
