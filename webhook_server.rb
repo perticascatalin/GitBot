@@ -45,16 +45,16 @@ helpers do
       patch = file["patch"]
       filename = file["filename"]
       comment_body = 'Inspecting file ' + filename + ' for potential issues.'
-      # Where the first hunk begins in the file
+      # Line in the file where the first hunk begins
       start_position = patch.lines.first.split(/[^\d]/).select{|s| !s.empty?}.first.to_i
       # However, there can be several hunks in a file
       num_hunks = patch.lines.select{|l| l.start_with?("@@")}.count
-      # Need to remove end of file marker
+      # Need to remove end of file marker (edge case for comment at the end of the file)
       eof = patch.lines.any?{|l| l.start_with?("\\ No newline at end of file")} ? 1 : 0
       # This will place the comment at the end of the last hunk)
       position = patch.lines.count - eof - 1
 
-      # One review per hunk
+      # One review per hunk, add a comment after first line of each hunk
       patch.lines.each_with_index do |line, index|
         if line.start_with?("@@")
           position = index + 1
