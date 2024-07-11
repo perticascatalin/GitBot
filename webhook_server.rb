@@ -54,6 +54,19 @@ helpers do
       # This will place the comment at the end of the last hunk)
       position = patch.lines.count - eof - 1
 
+      # Split into hunks
+      hunks = []
+      current_hunk = ""
+      patch.lines.each_with_index do |line, index|
+        if line.start_with?("@@")
+          hunks << current_hunk
+          binding.pry
+          current_hunk = ""
+        else
+          current_hunk += "\n" + line
+        end
+      end
+
       # One review per hunk, add a comment after first line of each hunk
       patch.lines.each_with_index do |line, index|
         if line.start_with?("@@")

@@ -1,6 +1,10 @@
 import os
 import json
+from flask import Flask, request, jsonify
 from crewai import Agent, Task, Crew, Process
+
+# os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY"
+os.environ['OPENAI_MODEL_NAME'] = 'gpt-4o'
 
 def callback_function(output):
     # Do something after the task is completed
@@ -11,96 +15,122 @@ def callback_function(output):
         Output: {output.raw_output}
     """)
 
-# os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY"
-os.environ['OPENAI_MODEL_NAME'] = 'gpt-4o'
+def read_files_in_directory(directory_path):
+    all_files_content = []
 
-agents_file = open('agents.json')
-agents = json.load(agents_file)
-verbosity = True
+    # List all files in the specified directory
+    for filename in os.listdir(directory_path):
+        file_path = os.path.join(directory_path, filename)
 
-# Define your agents with roles and goals
-front_end_dev = Agent(
-  role='Front End Tech Lead',
-  goal=" ".join(agents['front_end_dev']['goal']),
-  backstory=" ".join(agents['front_end_dev']['backstory']),
-  verbose=verbosity,
-  allow_delegation=True,
-)
+        # Check if the file path is a file (not a directory)
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as file:
+                # Read the content of the file
+                file_content = file.read()
+                # Append the content to the list
+                all_files_content.append(file_content)
 
-back_end_dev = Agent(
-  role='Back End Tech Lead',
-  goal=" ".join(agents['back_end_dev']['goal']),
-  backstory=" ".join(agents['back_end_dev']['backstory']),
-  verbose=verbosity,
-  allow_delegation=True,
-)
+    return all_files_content
 
-manager = Agent(
-    role='Manager',
-    goal=" ".join(agents['manager']['goal']),
-    backstory=" ".join(agents['manager']['backstory']),
+def run_experiment():
+    agents_file = open('agents.json')
+    agents = json.load(agents_file)
+    verbosity = True
+
+    # Define your agents with roles and goals
+    front_end_dev = Agent(
+    role='Front End Tech Lead',
+    goal=" ".join(agents['front_end_dev']['goal']),
+    backstory=" ".join(agents['front_end_dev']['backstory']),
     verbose=verbosity,
     allow_delegation=True,
-#     response_template="""<|start_header_id|>assistant<|end_header_id|>
+    )
 
-# {{ .Response }}<|eot_id|>"""
-)
-
-summary_spacialist = Agent(
-    role='Summary Specialist',
-    goal=" ".join(agents['summary_specialist']['goal']),
-    backstory=" ".join(agents['summary_specialist']['backstory']),
+    back_end_dev = Agent(
+    role='Back End Tech Lead',
+    goal=" ".join(agents['back_end_dev']['goal']),
+    backstory=" ".join(agents['back_end_dev']['backstory']),
     verbose=verbosity,
     allow_delegation=True,
-)
+    )
 
-task_instruction = "Take a look at this code diff:"
-output_instruction = "A professional code review comment with the guidelines followed in the improvement suggestion, short reasoning and the code diff. At most 3 paragraphs and the code diff."
-tasks_file = open('tasks.json')
-tasks = json.load(tasks_file)
+    manager = Agent(
+        role='Manager',
+        goal=" ".join(agents['manager']['goal']),
+        backstory=" ".join(agents['manager']['backstory']),
+        verbose=verbosity,
+        allow_delegation=True
+    )
 
-# Create tasks for your agents
-task1 = Task(
-  description=task_instruction + " ".join(tasks['task 1']),
-  expected_output=output_instruction,
-  agent=manager,
-  async_execution=True,
-#   callback=callback_function
-)
+    summary_spacialist = Agent(
+        role='Summary Specialist',
+        goal=" ".join(agents['summary_specialist']['goal']),
+        backstory=" ".join(agents['summary_specialist']['backstory']),
+        verbose=verbosity,
+        allow_delegation=True,
+    )
 
-task2 = Task(
-  description=task_instruction + " ".join(tasks['task 2']),
-  expected_output=output_instruction,
-  agent=manager,
-  async_execution=True,
-#   callback=callback_function
-)
+    task_instruction = "Take a look at this code diff:"
+    output_instruction = "A professional code review comment with the guidelines followed in the improvement suggestion, short reasoning and the code diff. At most 3 paragraphs and the code diff."
 
-# Instantiate your crew with a sequential process
-crew = Crew(
-  agents=[summary_spacialist, manager, front_end_dev, back_end_dev],
-  tasks=[task1, task2],
-  verbose=2, # You can set it to 1 or 2 to different logging levels
-  process = Process.sequential,
-  full_output=True,
-)
+    tasks = []
 
-# Get your crew to work!
-result = crew.kickoff()
+    # Specify the directory path
+    directory_path = './samples'
 
-print("######################")
-print(result)
+    # Get the concatenated content of all files in the directory
+    all_files_content = read_files_in_directory(directory_path)
 
-# Returns a TaskOutput object with the description and results of the task
-print(f"""
-    Task 1 completed!
-    Task: {task1.output.description}
-    Output: {task1.output.raw_output}
-""")
+    # Print the array of file contents
+    for i, content in enumerate(all_files_content):
+        print(f"Content of file {i + 1}:\n{content}\n")
+        new_task = Task(
+            description=task_instruction + content,
+            expected_output=output_instruction,
+            agent=manager,
+            async_execution=True,
+            # callback=callback_function
+        )
+        tasks.append(new_task)
 
-# Returns a TaskOutput object with the description and results of the task
-print(f"""
-    Task 2 completed!
-    Task: {task2.output.description}
-    Output: {task2.output.raw_output}
-""")
+
+    # Instantiate your crew with a sequential process
+    crew = Crew(
+    agents=[summary_spacialist, manager, front_end_dev, back_end_dev],
+    tasks=tasks,
+    verbose=2, # You can set it to 1 or 2 to different logging levels
+    process = Process.sequential,
+    full_output=True,
+    )
+
+    # Get your crew to work!
+    result = crew.kickoff()
+
+    print("######################")
+    print(result)
+
+    for i, task in enumerate(crew.tasks):
+        print(f"""
+            Task {i + 1} completed!
+            Task: {task.output.description}
+            Output: {task.output.raw_output}
+        """)
+
+# run_experiment()
+
+app = Flask(__name__)
+
+@app.route('/', methods=['GET'])
+def handle_get():
+    return "Hello, World! This is a GET request."
+
+@app.route('/', methods=['POST'])
+def handle_post():
+    data = request.json
+    return jsonify({
+        "message": "Hello, World! This is a POST request.",
+        "received_data": data
+    })
+
+if __name__ == '__main__':
+    app.run(port=8000)
