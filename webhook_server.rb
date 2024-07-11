@@ -13,6 +13,7 @@ config = JSON.parse(file)
 SECRET = config["webhook_secret"]
 AUTH = config["github_token"]
 
+
 helpers do
   # Verifies the signature of a payload body against a given signature.
   #
@@ -66,6 +67,7 @@ helpers do
           current_hunk += line
         end
       end
+      hunks << current_hunk
 
       empty = hunks.shift
       binding.pry
