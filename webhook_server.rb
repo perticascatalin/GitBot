@@ -31,13 +31,11 @@ helpers do
     # Call AI services
 
     # Define the URL of your Python server
-    url = URI.parse('http://localhost:8000')
+    uri = URI.parse('http://localhost:8000')
 
-    # Create a new HTTP request object
-    http = Net::HTTP.new(url.host, url.port)
-
-    # Create a POST request
-    request = Net::HTTP::Post.new(url.path, { 'Content-Type' => 'application/json' })
+    # Create the HTTP request
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Post.new(uri)
 
     # Define the request body
     request.body = hunks.to_json
