@@ -35,8 +35,8 @@ helpers do
 
     # Create the HTTP request
     http = Net::HTTP.new(uri.host, uri.port)
-    http.open_timeout = 300 # 300 seconds for open timeout
-    http.read_timeout = 300 # 300 seconds for read timeout
+    http.open_timeout = 600 # 600 seconds for open timeout
+    http.read_timeout = 600 # 600 seconds for read timeout
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
 
