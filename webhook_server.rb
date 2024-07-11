@@ -27,6 +27,24 @@ helpers do
     Rack::Utils.secure_compare(sha1, signature)
   end
 
+  def call_ai_services(hunks)
+    # Call AI services
+
+    # Define the URL of your Python server
+    url = URI.parse('http://localhost:8000')
+
+    # Create a new HTTP request object
+    http = Net::HTTP.new(url.host, url.port)
+
+    # Create a GET request
+    request = Net::HTTP::Get.new(url.request_uri)
+
+    # Send the request and get the response
+    response = http.request(request)
+
+    binding.pry
+  end  
+
   # Public: Posts review comments on a commit.
   #
   # url    - The URL of the commit to review.
@@ -70,7 +88,7 @@ helpers do
       hunks << current_hunk
 
       empty = hunks.shift
-      binding.pry
+      call_ai_services(hunks)
       # hunks_in_all_files += hunks
 
       # One review per hunk, add a comment after first line of each hunk
