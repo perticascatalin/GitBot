@@ -33,6 +33,9 @@ helpers do
     # Define the URL of your Python server
     url = URI.parse('http://localhost:8000')
 
+    # Create a new HTTP request object
+    http = Net::HTTP.new(url.host, url.port)
+
     # Create a POST request
     request = Net::HTTP::Post.new(url.path, { 'Content-Type' => 'application/json' })
 
