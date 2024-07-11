@@ -32,7 +32,7 @@ def read_files_in_directory(directory_path):
 
     return all_files_content
 
-def run_experiment():
+def run_experiment(hunks):
     agents_file = open('agents.json')
     agents = json.load(agents_file)
     verbosity = True
@@ -79,7 +79,8 @@ def run_experiment():
     directory_path = './samples'
 
     # Get the concatenated content of all files in the directory
-    all_files_content = read_files_in_directory(directory_path)
+    # all_files_content = read_files_in_directory(directory_path)
+    all_files_content = hunks
 
     # Print the array of file contents
     for i, content in enumerate(all_files_content):
@@ -116,7 +117,7 @@ def run_experiment():
             Output: {task.output.raw_output}
         """)
 
-# run_experiment()
+    return crew.tasks
 
 app = Flask(__name__)
 
@@ -127,9 +128,17 @@ def handle_get():
 @app.route('/', methods=['POST'])
 def handle_post():
     data = request.json
+    print(data)
+    hunks = list(data.values())
+    return_data = run_experiment(hunks)
+    dict = {}
+    for i, task in enumerate(return_data):
+        dict[i] = task.output.raw_output
+
+    return_dict = json.dumps(dict, indent=4)
     return jsonify({
         "message": "Hello, World! This is a POST request.",
-        "received_data": data
+        "received_data": return_dict
     })
 
 if __name__ == '__main__':

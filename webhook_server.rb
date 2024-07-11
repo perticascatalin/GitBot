@@ -35,11 +35,15 @@ helpers do
 
     # Create the HTTP request
     http = Net::HTTP.new(uri.host, uri.port)
+    http.open_timeout = 300 # 300 seconds for open timeout
+    http.read_timeout = 300 # 300 seconds for read timeout
     request = Net::HTTP::Post.new(uri)
+    request["Content-Type"] = "application/json"
 
     # Define the request body
-    request.body = hunks.to_json
-    binding.pry
+    body = {}
+    hunks.each_with_index{|h, index| body[index] = h}
+    request.body = body.to_json
 
     # Send the request and get the response
     response = http.request(request)
@@ -47,7 +51,8 @@ helpers do
     # Print the response body
     puts response.body
 
-    binding.pry
+    comments = JSON.parse(response.body)
+    return comments['received_data']
   end  
 
   # Public: Posts review comments on a commit.
@@ -93,20 +98,24 @@ helpers do
       hunks << current_hunk
 
       empty = hunks.shift
-      call_ai_services(hunks)
       # hunks_in_all_files += hunks
+      comments = call_ai_services(hunks)
+      start_index = 1
 
       # One review per hunk, add a comment after first line of each hunk
       patch.lines.each_with_index do |line, index|
         if line.start_with?("@@")
+
           position = index + 1
           # Request body
           request.body = {
-            body: comment_body,
+            # body: comment_body,
+            body: comments[start_index],
             commit_id: commit["sha"],
             path: filename,
             position: position
           }.to_json
+          start_index += 1
 
           # Send the request
           response = http.request(request)
