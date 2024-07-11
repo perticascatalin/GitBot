@@ -41,6 +41,7 @@ helpers do
     request["X-Github-Api-Version"] = "2022-11-28"
     request["Authorization"] = AUTH
     files = commit["files"]
+    hunks_in_all_files = []
     files.each do |file|
       patch = file["patch"]
       filename = file["filename"]
@@ -60,13 +61,15 @@ helpers do
       patch.lines.each_with_index do |line, index|
         if line.start_with?("@@")
           hunks << current_hunk
-          binding.pry
           current_hunk = ""
         else
-          current_hunk += "\n" + line
+          current_hunk += line
         end
       end
+
+      empty = hunks.shift
       binding.pry
+      # hunks_in_all_files += hunks
 
       # One review per hunk, add a comment after first line of each hunk
       patch.lines.each_with_index do |line, index|
@@ -105,7 +108,6 @@ helpers do
     uri = URI.parse(url.sub("github.com", "api.github.com/repos").sub("commit", "commits"))
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    # Random comment
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
     commit = JSON.parse(response.body)
