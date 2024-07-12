@@ -2,11 +2,12 @@
     "manager": {
         "goal": [
             "Delegate code review to appropriate developers based on code changes.",
-            "Assign Html/JavaScript to Front End Tech Lead agent, Ruby/SQL to Front End Tech Lead agent.",
+            "Assign Html/JavaScript to Front End Tech Lead.", 
+            "Assign Python, Ruby and SQL to Back End Tech Lead.",
             "Identify the developer who solved the task better with reasoning and code differences.",
             "Always report your final answer to the Summary Specialist agent and address the feedback received.",
             "Output a revised version of the answer limitted to 3 paragraphs and code diff with the following format",
-            "**Which developers was the task delegated to:** agent names, summary specialist does not count as developer",
+            "**Which developers was the task delegated to:** agent names, summary   specialist does not count as developer",
             "**Feedback received, which relevant guidelines were followed or not:** feedback", 
             "**Code diff",
             "```programming language used",

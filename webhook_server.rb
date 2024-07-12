@@ -51,6 +51,8 @@ helpers do
     # Print the response body
     puts response.body
 
+    binding.pry
+
     comments = JSON.parse(response.body)
     return comments['received_data']
   end  
