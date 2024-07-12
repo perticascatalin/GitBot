@@ -51,10 +51,8 @@ helpers do
     # Print the response body
     puts response.body
 
-    binding.pry
-
     comments = JSON.parse(response.body)
-    return comments['received_data']
+    return JSON.parse(comments['received_data']).values
   end  
 
   # Public: Posts review comments on a commit.
@@ -102,7 +100,7 @@ helpers do
       empty = hunks.shift
       # hunks_in_all_files += hunks
       comments = call_ai_services(hunks)
-      start_index = 1
+      start_index = 0
 
       # One review per hunk, add a comment after first line of each hunk
       patch.lines.each_with_index do |line, index|

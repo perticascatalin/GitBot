@@ -1,5 +1,6 @@
 import os
 import json
+import pdb
 from flask import Flask, request, jsonify
 from crewai import Agent, Task, Crew, Process
 
@@ -39,19 +40,19 @@ def run_experiment(hunks):
 
     # Define your agents with roles and goals
     front_end_dev = Agent(
-    role='Front End Tech Lead',
-    goal=" ".join(agents['front_end_dev']['goal']),
-    backstory=" ".join(agents['front_end_dev']['backstory']),
-    verbose=verbosity,
-    allow_delegation=True,
+        role='Front End Tech Lead',
+        goal=" ".join(agents['front_end_dev']['goal']),
+        backstory=" ".join(agents['front_end_dev']['backstory']),
+        verbose=verbosity,
+        allow_delegation=True
     )
 
     back_end_dev = Agent(
-    role='Back End Tech Lead',
-    goal=" ".join(agents['back_end_dev']['goal']),
-    backstory=" ".join(agents['back_end_dev']['backstory']),
-    verbose=verbosity,
-    allow_delegation=True,
+        role='Back End Tech Lead',
+        goal=" ".join(agents['back_end_dev']['goal']),
+        backstory=" ".join(agents['back_end_dev']['backstory']),
+        verbose=verbosity,
+        allow_delegation=True
     )
 
     manager = Agent(
@@ -67,7 +68,7 @@ def run_experiment(hunks):
         goal=" ".join(agents['summary_specialist']['goal']),
         backstory=" ".join(agents['summary_specialist']['backstory']),
         verbose=verbosity,
-        allow_delegation=True,
+        allow_delegation=True
     )
 
     task_instruction = "Take a look at this code diff:"
@@ -75,21 +76,14 @@ def run_experiment(hunks):
 
     tasks = []
 
-    # Specify the directory path
-    directory_path = './samples'
-
-    # Get the concatenated content of all files in the directory
-    # all_files_content = read_files_in_directory(directory_path)
-    all_files_content = hunks
-
     # Print the array of file contents
-    for i, content in enumerate(all_files_content):
+    for i, content in enumerate(hunks):
         print(f"Content of file {i + 1}:\n{content}\n")
         new_task = Task(
             description=task_instruction + content,
             expected_output=output_instruction,
             agent=manager,
-            async_execution=True,
+            async_execution=False,
             # callback=callback_function
         )
         tasks.append(new_task)
@@ -97,12 +91,13 @@ def run_experiment(hunks):
 
     # Instantiate your crew with a sequential process
     crew = Crew(
-    agents=[summary_spacialist, manager, front_end_dev, back_end_dev],
-    tasks=tasks,
-    verbose=2, # You can set it to 1 or 2 to different logging levels
-    process = Process.sequential,
-    full_output=True,
+        agents=[summary_spacialist, manager, front_end_dev, back_end_dev],
+        tasks=tasks,
+        verbose=2, # You can set it to 1 or 2 to different logging levels
+        process = Process.sequential,
+        full_output=True,
     )
+
 
     # Get your crew to work!
     result = crew.kickoff()
@@ -135,7 +130,7 @@ def handle_post():
     for i, task in enumerate(return_data):
         dict[i] = task.output.raw_output
 
-    return_dict = json.dumps(dict, indent=4)
+    return_dict = json.dumps(dict)
     return jsonify({
         "message": "Hello, World! This is a POST request.",
         "received_data": return_dict
@@ -143,3 +138,18 @@ def handle_post():
 
 if __name__ == '__main__':
     app.run(port=8000)
+
+# # Specify the directory path
+# directory_path = './samples'
+
+# # Get the concatenated content of all files in the directory
+# hunks = read_files_in_directory(directory_path)
+
+# return_data = run_experiment(hunks)
+
+# breakpoint()
+# dict = {}
+# for i, task in enumerate(return_data):
+#     dict[i] = task.output.raw_output
+
+# return_dict = json.dumps(dict)
