@@ -1,4 +1,4 @@
-# Generic WHS
+# Generic WHS select
 courses.generic_whs_initialize_select = (level) ->
   level_data = window.generic_whs_targets[level]
   $(level_data["id"]).select2({
