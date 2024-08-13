@@ -4,7 +4,10 @@ import pdb
 from flask import Flask, request, jsonify
 from crewai import Agent, Task, Crew, Process
 
-# os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY"
+config_file = open('config.json')
+config_json = json.load(config_file)
+
+os.environ["OPENAI_API_KEY"] = config_json['OPENAI_API_KEY']
 os.environ['OPENAI_MODEL_NAME'] = 'gpt-4o'
 
 def callback_function(output):
