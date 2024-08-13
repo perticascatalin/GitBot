@@ -179,6 +179,7 @@ post '/webhook' do
   verify_signature(payload_body, request.env['HTTP_X_HUB_SIGNATURE']) || halt(400, 'Invalid signature')
 
   push = JSON.parse(payload_body)
+  binding.pry
   puts "Received payload: #{push.inspect}"
 
   analyze_payload(push)
