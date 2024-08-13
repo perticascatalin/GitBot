@@ -8,7 +8,7 @@ config_file = open('config.json')
 config_json = json.load(config_file)
 
 os.environ["OPENAI_API_KEY"] = config_json['OPENAI_API_KEY']
-os.environ['OPENAI_MODEL_NAME'] = 'gpt-4o'
+os.environ['OPENAI_MODEL_NAME'] = 'gpt-4o-mini'
 
 def callback_function(output):
     # Do something after the task is completed
