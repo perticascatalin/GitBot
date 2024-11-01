@@ -3,7 +3,7 @@ require 'uri'
 require 'pry'
 require 'json'
 
-file = File.read('./config.json')
+file = File.read('../config.json')
 $config = JSON.parse(file)
 $repo_owner = $config['repo_owner']
 $repo_name = $config['repo_name']
@@ -27,7 +27,7 @@ def page_request(pg)
 
   data = JSON.parse(response.body)
 
-  File.open("./data/#{pg}.json", 'w') do |f|
+  File.open("../data/#{pg}.json", 'w') do |f|
     f.write(data.to_json)
   end
 end
