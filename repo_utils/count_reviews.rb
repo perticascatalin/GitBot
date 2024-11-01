@@ -4,23 +4,23 @@ require 'pry'
 user_count = {}
 file_count = {}
 
-file = File.read("./config.json")
+file = File.read('./config.json')
 config = JSON.parse(file)
 
-PAGES = config["pages_of_reviews"]
+num_pages = config['pages_of_reviews']
 
-for pg in 1..PAGES do
-  file = File.read("./data/#{pg}.json")
+for page in 1..num_pages do
+  file = File.read("./data/#{page}.json")
   data = JSON.parse(file)
   if data.class == Array
     for cmt in 0..data.size-1
-      user = data[cmt]["user"]["login"]
+      user = data[cmt]['user']['login']
       if user_count[user].nil?
         user_count[user] = 1
       else
         user_count[user] += 1
       end
-      fl = data[cmt]["path"]
+      fl = data[cmt]['path']
       if file_count[fl].nil?
         file_count[fl] = 1
       else
@@ -28,7 +28,7 @@ for pg in 1..PAGES do
       end
     end
   else
-    puts pg
+    puts page
   end
 end
 

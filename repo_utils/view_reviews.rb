@@ -13,8 +13,8 @@ def print_cmt_data(cmt_data)
   puts "\n\n\n"
 end
 
-def view_page_reviews(pg)
-  file = File.read("./data/#{pg}.json")
+def view_page_reviews(page)
+  file = File.read("./data/#{page}.json")
   data = JSON.parse(file)
 
   for cmt in 0..data.size-1
@@ -22,23 +22,22 @@ def view_page_reviews(pg)
   end
 end
 
-def view_file_reviews(reviewed_file)
+def view_file_reviews(file_path)
   config_file = File.read('./config.json')
   config = JSON.parse(config_file)
   num_pages = config['pages_of_reviews']
 
-  for pg in 1..num_pages do
-    file = File.read("./data/#{pg}.json")
+  for page in 1..num_pages do
+    file = File.read("./data/#{page}.json")
     data = JSON.parse(file)
     for cmt in 0..data.size-1
-      fl = data[cmt]['path']
-      print_cmt_data(data[cmt]) if fl == reviewed_file
+      print_cmt_data(data[cmt]) if data[cmt]['path'] == file_path
     end
   end
 end
 
-pg = ARGV[0] # page of reviews to look at
-view_page_reviews(pg)
+# page = ARGV[0] # page of reviews to look at
+# view_page_reviews(page)
 
-# reviewed_file = ARGV[0] # file for which to find reviews
-# view_file_reviews(reviewed_file)
+# file_path = ARGV[0] # file for which to find reviews
+# view_file_reviews(file_path)
