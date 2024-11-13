@@ -5,13 +5,13 @@ user_count = {}
 file_count = {}
 file_user_count = {}
 
-file = File.read('./config.json')
+file = File.read('../config.json')
 config = JSON.parse(file)
 
 num_pages = config['pages_of_reviews']
 
 for page in 1..num_pages do
-  file = File.read("./data/#{page}.json")
+  file = File.read("../data/#{page}.json")
   data = JSON.parse(file)
   if data.class == Array
     for cmt in 0..data.size-1
@@ -66,3 +66,5 @@ end
 sorted_aggregated_reviews = aggregated_reviews.transform_values do |user_reviews|
   user_reviews.sort_by { |user, count| -count }.to_h
 end
+
+binding.pry
