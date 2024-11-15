@@ -39,12 +39,21 @@ github_helper.download_pull_request(pull_number)
 ### Repo Analysis
 
 ```ruby
+require_relative 'repo_utils/repo_analysis'
+
+page = 1
+filepath = 'app/lib/x.rb'
 repo_analysis = RepoAnalysis.new('data/reviews')
-repo_analysis.view_page_reviews(1)
-repo_analysis.view_file_reviews('app/lib/x.rb')
+repo_analysis.view_page_reviews(page)
+repo_analysis.view_file_reviews(filepath)
 analysis = repo_analysis.analyze_reviews
 analysis[:user_count]
 analysis[:file_count]
 analysis[:file_user_count]
 analysis[:aggregated_reviews]
+
+pull_number = 100
+repo_analysis = RepoAnalysis.new('data/pull_requests')
+pull_request = repo_analysis.pull_request_data(pull_number)
+files = repo_analysis.pull_request_files(pull_number)
 ```

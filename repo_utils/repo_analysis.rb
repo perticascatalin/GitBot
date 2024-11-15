@@ -24,6 +24,18 @@ class RepoAnalysis
     end
   end
 
+  def pull_request_data(pull_number)
+    file = read_data_file(pull_number)
+    data = JSON.parse(file)
+    data.map { |item| item.slice('filename', 'patch') }
+  end
+
+  def pull_request_files(pull_number)
+    file = read_data_file(pull_number)
+    data = JSON.parse(file)
+    data.map { |item| item['filename'] }
+  end
+
   def analyze_reviews
     user_count = Hash.new(0)
     file_count = Hash.new(0)
@@ -75,8 +87,8 @@ class RepoAnalysis
     end.max
   end
 
-  def read_data_file(page)
-    file_path = File.join(@data_directory, "#{page}.json")
+  def read_data_file(id)
+    file_path = File.join(@data_directory, "#{id}.json")
     raise "File not found: #{file_path}" unless File.exist?(file_path)
 
     File.read(file_path)
