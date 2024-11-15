@@ -27,7 +27,7 @@ class GitHubHelper
 
   def reviews_page_request(page)
     per_page = 100
-    uri = URI.parse("https://api.github.com/repos/#{@repo_owner}/#{@repo_name}/pulls/comments?per_page=#{per_page}&page=#{page}&sort='created_at'&direction='asc'")
+    uri = URI.parse("https://api.github.com/repos/#{@repo_owner}/#{@repo_name}/pulls/comments?per_page=#{per_page}&page=#{page}")
     request = Net::HTTP::Get.new(uri)
     request['Accept'] = 'application/vnd.github+json'
     request['Authorization'] = @github_token
