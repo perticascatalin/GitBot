@@ -4,10 +4,10 @@ require 'uri'
 require 'json'
 require 'pry'
 
-require_relative 'repo_utils/get_reviews'
+require_relative 'repo_utils/github_helper'
 
 start_page = 178
 end_page = 178
-git_helper = GitHubHelper.new('config.json')
-git_helper.download_comments(start_page, end_page)
-git_helper.download_pull_request(45333)
+github_helper = GitHubHelper.new('config.json')
+github_helper.download_comments(start_page, end_page)
+github_helper.download_pull_request(45333)

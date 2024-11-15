@@ -1,6 +1,6 @@
 # GitBot
 
-## Setup
+## Webhook Server
 
 ```ruby
 # Start service for automatic reviews
@@ -9,6 +9,8 @@ ruby webhook_server.rb
 ```
 
 ## Repository Utils
+
+### GitHub Helper
 
 Uses the Git API to do the following:
 
@@ -21,5 +23,4 @@ Setup steps:
 - Set the following fields:
   - "repo_owner" - repository owner
   - "repo_name" - repository name
-  - "pages_of_reviews" - how many pages of reviews to process
   - "github_token" - needed if the repository is private
