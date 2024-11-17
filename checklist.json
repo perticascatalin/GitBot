@@ -148,5 +148,31 @@
     "code_name": "Optimize Database Queries with includes and joins",
     "explanation": "Use includes to eager-load associations and avoid N+1 queries by fetching related records in a single query. For more complex conditions or filters, use joins to optimize query performance and ensure efficient data retrieval.",
     "rule": "Applies to Ruby files (.rb) and .html.haml files."
+  },
+  {
+    "code_name": "Guard Against Stored XSS for New Inputs",
+    "explanation": "Ensure new inputs are protected against stored XSS attacks by properly sanitizing and escaping user input. Inputs containing malicious scripts, such as <script>alert()</script>, should not be executed when rendered. Perform validation in controllers, models, views, and complement with client-side checks. Use tools like sanitize and escape helpers to prevent unsafe content rendering.",
+    "rule": "Applies to Ruby files (.rb) in app/controllers, app/models, .html.haml, .erb files, and JavaScript/CoffeeScript files (.js, .coffee)."
+  },
+  {
+    "code_name": "Use Global Variables Appropriately",
+    "explanation": "Global variables should be used cautiously and only when necessary for global scope access. Consider using instance variables for data specific to a particular context or local variables for more narrowly scoped logic. Minimize reliance on global variables to prevent unexpected behavior and maintain encapsulation.",
+    "rule": "Applies to Ruby files (.rb) and JavaScript/CoffeeScript files (.js, .coffee)."
+  },
+  {
+    "code_name": "Use Instance vs. Local Variables Appropriately",
+    "explanation": "Use local variables for data that is limited to the scope of a method or block. Use instance variables when data needs to persist across multiple methods in an object instance. Minimize the use of global variables to maintain encapsulation and prevent unintended side effects.",
+    "rule": "Applies to Ruby files (.rb) and JavaScript/CoffeeScript files (.js, .coffee)."
+  },
+  {
+    "code_name": "Add Factory for New Models",
+    "explanation": "Ensure that a factory is added for any new models created via migrations. This provides a consistent and convenient way to create test instances, supporting comprehensive test coverage and simplifying test setup.",
+    "rule": "Applies to Ruby files (.rb) representing models created through db/migrate/."
+  },
+  {
+    "code_name": "Check License for New Gems or Libraries",
+    "explanation": "If you add a new gem or library, ensure you check its license. Avoid using libraries or gems that are licensed under the GPL, as this may introduce licensing conflicts.",
+    "rule": "Applies to Gemfile and Gemfile.lock."
   }
+
 ]
