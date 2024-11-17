@@ -2,176 +2,286 @@
   {
     "code_name": "Clean and Readable Views Code",
     "explanation": "Is the code clean and readable? If applicable, suggest avoiding deep nesting and grouping related elements. Break down complex views into smaller reusable partials.",
-    "rule": "Applies to .html.haml, .erb, and any other templating files that might include HTML output."
+    "rule": {
+      "file_patterns": ["**/*.html.haml"],
+      "description": "Applies to .html.haml template files."
+    }
   },
   {
     "code_name": "Minimal Ruby Logic in Views",
     "explanation": "Is the use of Ruby logic kept to a minimum? If applicable, suggest minimizing the use of Ruby logic. Logic-heavy code should typically be in controllers or helpers, with views focusing on rendering data.",
-    "rule": "Applies to .html.haml, .erb, and any other templating files that might include HTML output."
+    "rule": {
+      "file_patterns": ["**/*.html.haml"],
+      "description": "Applies to .html.haml template files."
+    }
   },
   {
     "code_name": "Avoid Inline Styles",
     "explanation": "Are inline styles present? If so, no inline style should be present. For conditional styles or one-off style customization, suggest considering the use of a ruby helper method.",
-    "rule": "Applies to .html.haml, .erb, and any other templating files that might include HTML output."
+    "rule": {
+      "file_patterns": ["**/*.html.haml"],
+      "description": "Applies to .html.haml template files."
+    }
   },
   {
     "code_name": "Variable Names Free of Typos",
     "explanation": "Variable names do not contain typos. Ensure variable names are spelled correctly, meaningful, and adhere to naming conventions.",
-    "rule": "Applies to Ruby files (.rb), .html.haml files, and JavaScript files (.js and .coffee)."
+    "rule": {
+      "file_patterns": ["**/*.rb", "**/*.html.haml", "**/*.js", "**/*.js.coffee"],
+      "description": "Applies to Ruby files, .html.haml files, and JavaScript files."
+    }
   },
   {
     "code_name": "CSS Styling Indentation Under Body Tag",
     "explanation": "Ensure CSS styling is indented under a body tag.",
-    "rule": "Applies to .sass and other stylesheet files."
+    "rule": {
+      "file_patterns": ["**/*.sass", "**/*.scss", "**/*.css"],
+      "description": "Applies to stylesheet files."
+    }
   },
   {
     "code_name": "No binding.pry Statements",
     "explanation": "Ensure there are no binding.pry statements present, as they are used for debugging and should be removed from production code.",
-    "rule": "Applies to Ruby files (.rb) and .html.haml files."
+    "rule": {
+      "file_patterns": ["**/*.rb", "**/*.html.haml"],
+      "description": "Applies to Ruby files and .html.haml files."
+    }
   },
   {
     "code_name": "No Console Logging or Debugger Statements",
     "explanation": "Ensure there are no console.log or debugger; statements present, as these are used for debugging and should be removed from production code.",
-    "rule": "Applies to JavaScript files (.js, .coffee)."
+    "rule": {
+      "file_patterns": ["**/*.js", "**/*.js.coffee"],
+      "description": "Applies to JavaScript files."
+    }
   },
   {
     "code_name": "Avoid Duplicate Event Bindings",
     "explanation": "When using .on('change') or .on('click') event handlers, ensure they are preceded by corresponding .off('change') or .off('click') calls to avoid duplicate event bindings.",
-    "rule": "Applies to JavaScript files (.js, .coffee)."
+    "rule": {
+      "file_patterns": ["**/*.js", "**/*.js.coffee"],
+      "description": "Applies to JavaScript files."
+    }
   },
   {
     "code_name": "Auto-Focus First Input on Page or Popup Load",
     "explanation": "Ensure that when a new page is opened or a popup is displayed, the first input field is automatically focused to enhance user experience.",
-    "rule": "Applies to JavaScript files (.js) and CoffeeScript files (.coffee)."
+    "rule": {
+      "file_patterns": ["**/*.js", "**/*.js.coffee"],
+      "description": "Applies to JavaScript files."
+    }
   },
   {
     "code_name": "Guard Buttons Against Double-Clicking",
     "explanation": "Ensure all buttons performing actions are guarded against double-clicking by using the data-disable-with attribute for form submissions or by handling button state management in JavaScript for dynamically created buttons or custom actions.",
-    "rule": "Applies to form submission buttons in .html.erb, .html.haml, other template files, and JavaScript files (.js, .coffee)."
+    "rule": {
+      "file_patterns": ["**/*.html.haml", "**/*.js", "**/*.js.coffee"],
+      "description": "Applies to .html.haml files and JavaScript files."
+    }
   },
   {
     "code_name": "Text Added to Translation Files",
     "explanation": "Ensure all texts are added under translation files for all supported languages. Translated text should appear as t('some_key') or I18n.t('some_key') instead of plain English text within single or double quotes.",
-    "rule": "Applies to Ruby files (.rb), .html.haml files, and JavaScript/CoffeeScript files (.js, .coffee), except for migration files (db/migrate/...)."
+    "rule": {
+      "file_patterns": ["**/*.rb", "**/*.html.haml", "**/*.js", "**/*.js.coffee"],
+      "exclude_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to Ruby files, .html.haml files, and JavaScript files, except migration files."
+    }
   },
   {
     "code_name": "Ensure Translation Key Consistency",
     "explanation": "Ensure that each key in the translation file (YML format) exists for all supported languages, using the keys in en.yml as the base reference.",
-    "rule": "Applies to files with the .yml extension."
+    "rule": {
+      "file_patterns": ["**/*.yml"],
+      "description": "Applies to YAML files."
+    }
   },
   {
     "code_name": "Avoid Adding Fields on Large Tables in Migrations",
     "explanation": "Fields added on large tables should be avoided because migrations may take too long or cause performance issues. Examples of large tables include: league, round, user, customer, member, player, tournaments2_event, tournaments2_spec, tournaments2_net, tournaments2_aggregate, and other tables starting with tournaments2_...",
-    "rule": "Applies only to Ruby files (.rb) under db/migrate/."
+    "rule": {
+      "file_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to migration files under db/migrate."
+    }
   },
   {
     "code_name": "Ensure ID Fields are Numeric with Specific Precision and Scale",
     "explanation": "ID-type fields in migrations should be numeric, with precision set to 22 and scale set to 0. Example: t.numeric :league_id, precision: 22, scale: 0.",
-    "rule": "Applies to Ruby files (.rb) under db/migrate/."
+    "rule": {
+      "file_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to migration files under db/migrate."
+    }
   },
   {
     "code_name": "Index Warning for Non-Text Fields in Migrations",
     "explanation": "For migration files, add an index warning only if the field is not a text type. Never add an index on text columns.",
-    "rule": "Applies to Ruby files (.rb) under db/migrate/."
+    "rule": {
+      "file_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to migration files under db/migrate."
+    }
   },
   {
     "code_name": "Enforce Value Uniqueness with a Unique Index",
     "explanation": "Ensure that value uniqueness is enforced at the database level by adding a unique index on the column. This prevents duplicate values and guarantees data integrity, complementing any application-level uniqueness validation.",
-    "rule": "Applies to Ruby files (.rb) under db/migrate/."
+    "rule": {
+      "file_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to migration files under db/migrate."
+    }
   },
   {
     "code_name": "Add Database Indexes for All Searchable Columns",
     "explanation": "Ensure that all columns used frequently in search operations, such as those in WHERE clauses, sorting, joining, or filtering queries, have corresponding database indexes to improve query performance and reduce search times.",
-    "rule": "Applies to Ruby files (.rb) under db/migrate/."
+    "rule": {
+      "file_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to migration files under db/migrate."
+    }
   },
   {
     "code_name": "Serialized Columns Should Be of Type Text",
     "explanation": "Ensure that serialized columns in new models are of type text to allow sufficient space for storing complex serialized objects. Using string type can lead to truncation or insufficient storage capacity.",
-    "rule": "Applies to new models and Ruby files (.rb) under app/models and db/migrate."
+    "rule": {
+      "file_patterns": ["app/models/**/*.rb", "db/migrate/**/*.rb"],
+      "description": "Applies to new models and migration files."
+    }
   },
   {
     "code_name": "Validate Data Integrity",
     "explanation": "Ensure that models include validations to maintain data integrity and prevent invalid data from being persisted. Use Rails' built-in validation methods such as presence, uniqueness, length, numericality, etc., to enforce constraints.",
-    "rule": "Applies to new models in Ruby files (.rb) under app/models."
+    "rule": {
+      "file_patterns": ["app/models/**/*.rb"],
+      "description": "Applies to models under app/models."
+    }
   },
   {
     "code_name": "Use Dependent Destroy for Child Relations",
     "explanation": "When creating a new model, ensure that dependent: :destroy is used for child relations defined by has_many or has_one associations to prevent orphaned records and maintain data integrity.",
-    "rule": "Applies to new models, specifically Ruby files (.rb) under app/models."
+    "rule": {
+      "file_patterns": ["app/models/**/*.rb"],
+      "description": "Applies to models under app/models."
+    }
   },
   {
     "code_name": "Add Custom Scopes for Common Queries",
     "explanation": "Define custom scopes for frequently used queries to keep code clean and maintainable. Scopes should encapsulate query logic and make queries reusable, readable, and concise when used throughout the application.",
-    "rule": "Applies to new models in Ruby files (.rb) under app/models."
+    "rule": {
+      "file_patterns": ["app/models/**/*.rb"],
+      "description": "Applies to models under app/models."
+    }
   },
   {
     "code_name": "Avoid Certain Model Callbacks",
     "explanation": "Do not add callbacks such as touch: true, after_update, after_save, etc., as they can introduce unexpected side effects, make code harder to debug, and impact performance. Consider moving complex logic to service objects or other dedicated layers.",
-    "rule": "Applies to new models in Ruby files (.rb) under app/models."
+    "rule": {
+      "file_patterns": ["app/models/**/*.rb"],
+      "description": "Applies to models under app/models."
+    }
   },
   {
     "code_name": "Use authorize! for URL Manipulation Protection",
     "explanation": "Ensure that all controller actions use authorize! to guard against unauthorized access and URL manipulation, providing fine-grained access control.",
-    "rule": "Applies to controller actions in Ruby files (.rb) under app/controllers."
+    "rule": {
+      "file_patterns": ["app/controllers/**/*.rb"],
+      "description": "Applies to controllers under app/controllers."
+    }
   },
   {
     "code_name": "Require User Authentication for Controller Actions",
     "explanation": "Ensure that all controller actions require a user to be logged in if necessary, using appropriate authentication checks to prevent unauthorized access.",
-    "rule": "Applies to controller actions in Ruby files (.rb) under app/controllers."
+    "rule": {
+      "file_patterns": ["app/controllers/**/*.rb"],
+      "description": "Applies to controllers under app/controllers."
+    }
   },
   {
     "code_name": "Keep Controllers Thin",
     "explanation": "Ensure controllers contain minimal logic. Move heavy business logic to models, service objects, or other dedicated classes. Controllers should focus on handling requests, invoking necessary services, and rendering responses.",
-    "rule": "Applies to controller actions in Ruby files (.rb) under app/controllers."
+    "rule": {
+      "file_patterns": ["app/controllers/**/*.rb"],
+      "description": "Applies to controllers under app/controllers."
+    }
   },
   {
     "code_name": "Use Before Actions to DRY Up Code",
     "explanation": "Utilize before_action callbacks to reduce code duplication by handling common tasks such as loading resources or checking permissions. This keeps controllers concise and more maintainable.",
-    "rule": "Applies to controller actions in Ruby files (.rb) under app/controllers."
+    "rule": {
+      "file_patterns": ["app/controllers/**/*.rb"],
+      "description": "Applies to controllers under app/controllers."
+    }
   },
   {
     "code_name": "Secure Sensitive Actions",
     "explanation": "Protect sensitive actions such as account deletion or critical data changes by adding additional checks like re-authentication, confirmation prompts, or multi-step verifications to prevent accidental or unauthorized access.",
-    "rule": "Applies to controller actions in Ruby files (.rb) under app/controllers."
+    "rule": {
+      "file_patterns": ["app/controllers/**/*.rb"],
+      "description": "Applies to controllers under app/controllers."
+    }
   },
   {
     "code_name": "Avoid Code Duplication",
     "explanation": "Ensure there is no duplicated code that could be extracted into functions, methods, or classes. Refactor repetitive code to improve maintainability, readability, and reduce redundancy.",
-    "rule": "Applies to Ruby files (.rb), .html.haml files, and JavaScript/CoffeeScript files (.js, .coffee)."
+    "rule": {
+      "file_patterns": ["**/*.rb", "**/*.html.haml", "**/*.js", "**/*.js.coffee"],
+      "description": "Applies to Ruby files, .html.haml files, and JavaScript files."
+    }
   },
   {
     "code_name": "Avoid Using .present? on Relationships",
     "explanation": "Do not use .present? on ActiveRecord relationships as it can lead to unnecessary database queries and memory usage. Instead, use .limit(1) to check for the presence of associated records more efficiently.",
-    "rule": "Applies to Ruby files (.rb) and .html.haml files."
+    "rule": {
+      "file_patterns": ["**/*.rb", "**/*.html.haml"],
+      "exclude_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to Ruby files and .html.haml files, excluding migration files."
+    }
   },
   {
     "code_name": "Optimize Database Queries with includes and joins",
     "explanation": "Use includes to eager-load associations and avoid N+1 queries by fetching related records in a single query. For more complex conditions or filters, use joins to optimize query performance and ensure efficient data retrieval.",
-    "rule": "Applies to Ruby files (.rb) and .html.haml files."
+    "rule": {
+      "file_patterns": ["**/*.rb", "**/*.html.haml"],
+      "exclude_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to Ruby files and .html.haml files, excluding migration files."
+    }
   },
   {
     "code_name": "Guard Against Stored XSS for New Inputs",
     "explanation": "Ensure new inputs are protected against stored XSS attacks by properly sanitizing and escaping user input. Inputs containing malicious scripts, such as <script>alert()</script>, should not be executed when rendered. Perform validation in controllers, models, views, and complement with client-side checks. Use tools like sanitize and escape helpers to prevent unsafe content rendering.",
-    "rule": "Applies to Ruby files (.rb) in app/controllers, app/models, .html.haml, .erb files, and JavaScript/CoffeeScript files (.js, .coffee)."
+    "rule": {
+      "file_patterns": ["app/controllers/**/*.rb", "app/models/**/*.rb", "**/*.html.haml", "**/*.js", "**/*.js.coffee"],
+      "description": "Applies to controllers, models, .html.haml files, and JavaScript files."
+    }
   },
   {
     "code_name": "Use Global Variables Appropriately",
     "explanation": "Global variables should be used cautiously and only when necessary for global scope access. Consider using instance variables for data specific to a particular context or local variables for more narrowly scoped logic. Minimize reliance on global variables to prevent unexpected behavior and maintain encapsulation.",
-    "rule": "Applies to Ruby files (.rb) and JavaScript/CoffeeScript files (.js, .coffee)."
+    "rule": {
+      "file_patterns": ["**/*.rb", "**/*.js", "**/*.js.coffee"],
+      "exclude_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to Ruby files and JavaScript files, excluding migration files."
+    }
   },
   {
     "code_name": "Use Instance vs. Local Variables Appropriately",
     "explanation": "Use local variables for data that is limited to the scope of a method or block. Use instance variables when data needs to persist across multiple methods in an object instance. Minimize the use of global variables to maintain encapsulation and prevent unintended side effects.",
-    "rule": "Applies to Ruby files (.rb) and JavaScript/CoffeeScript files (.js, .coffee)."
+    "rule": {
+      "file_patterns": ["**/*.rb", "**/*.js", "**/*.js.coffee"],
+      "exclude_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to Ruby files and JavaScript files, excluding migration files."
+    }
   },
   {
     "code_name": "Add Factory for New Models",
     "explanation": "Ensure that a factory is added for any new models created via migrations. This provides a consistent and convenient way to create test instances, supporting comprehensive test coverage and simplifying test setup.",
-    "rule": "Applies to Ruby files (.rb) representing models created through db/migrate/."
+    "rule": {
+      "file_patterns": ["db/migrate/**/*.rb"],
+      "description": "Applies to migration files that create new models."
+    }
   },
   {
     "code_name": "Check License for New Gems or Libraries",
     "explanation": "If you add a new gem or library, ensure you check its license. Avoid using libraries or gems that are licensed under the GPL, as this may introduce licensing conflicts.",
-    "rule": "Applies to Gemfile and Gemfile.lock."
+    "rule": {
+      "file_patterns": ["Gemfile", "Gemfile.lock"],
+      "description": "Applies to Gemfile and Gemfile.lock."
+    }
   }
 ]
