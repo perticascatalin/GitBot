@@ -18,6 +18,11 @@ class GitHubHelper
     pull_request_request(pull_number)
   end
 
+  def post_comment(pull_number, sha, filename, comment)
+    puts "Posting comment to #{pull_number}"
+    post_comment_request(pull_number, sha, filename, comment)
+  end
+
   private
 
   def load_config(path)
@@ -62,6 +67,29 @@ class GitHubHelper
 
     data = JSON.parse(response.body)
     save_to_file('pull_requests', pull_number, data)
+  end
+
+  def post_comment_request(pull_number, sha, filename, comment)
+    uri = URI.parse("https://api.github.com/repos/#{@repo_owner}/#{@repo_name}/pulls/#{pull_number}/comments")
+    request = Net::HTTP::Post.new(uri)
+    request["Accept"] = "application/vnd.github+json"
+    request['Authorization'] = @config['github_token']
+    request["X-Github-Api-Version"] = "2022-11-28"
+
+    req_options = {
+      use_ssl: uri.scheme == 'https'
+    }
+
+    request.body = {
+      "body": comment,
+      "commit_id": sha,
+      "path": filename,
+      "subject_type": "file"
+    }.to_json
+
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(request)
+    end
   end
 
   def save_to_file(subfolder, id, data)
