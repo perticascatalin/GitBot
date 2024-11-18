@@ -64,6 +64,30 @@ class GitHubHelper
     save_to_file('pull_requests', pull_number, data)
   end
 
+  def post_comment_request(pull_number, sha, filename)
+    uri = URI.parse("https://api.github.com/repos/#{@repo_owner}/#{@repo_name}/pulls/#{pull_number}/comments")
+    request = Net::HTTP::Post.new(uri)
+    request["Accept"] = "application/vnd.github+json"
+    request['Authorization'] = @config['github_token']
+    request["X-Github-Api-Version"] = "2022-11-28"
+
+    req_options = {
+      use_ssl: uri.scheme == 'https'
+    }
+
+    request.body = {
+      body: "Testing stuff",
+      commit_id: commit["sha"],
+      path: filename,
+      subject_type: "file"
+    }.to_json
+
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(request)
+    end
+    binding.pry
+  end
+
   def save_to_file(subfolder, id, data)
     File.open("data/#{subfolder}/#{id}.json", 'w') do |f|
       f.write(data.to_json)
