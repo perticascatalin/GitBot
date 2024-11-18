@@ -90,7 +90,7 @@
   },
   {
     "code_name": "Ensure Translation Key Consistency",
-    "explanation": "Ensure that each key in the translation file (YML format) exists for all supported languages, using the keys in en.yml as the base reference.",
+    "explanation": "Ensure that each key in the translation file (YML format) exists for all supported languages, using the keys in en.yml as the base reference. Placeholders, such as marked with a comment #[jp], #[es] etc are ok, as long as they match the filename, eg. #[es] in es.yml files. The important thing is that newly added keys are consistent across files. Eg. if 'cancel: ...' appears in en.yml, then it should also appear in the corresponding es.yml",
     "rule": {
       "file_patterns": ["**/*.yml"],
       "description": "Applies to YAML files."
@@ -106,7 +106,7 @@
   },
   {
     "code_name": "Ensure ID Fields are Numeric with Specific Precision and Scale",
-    "explanation": "ID-type fields in migrations should be numeric, with precision set to 22 and scale set to 0. Example: t.numeric :league_id, precision: 22, scale: 0.",
+    "explanation": "ID-type fields in migrations should be numeric, with precision set to 22 and scale set to 0. Example: t.numeric :league_id, precision: 22, scale: 0. This is only applicable to new columns with 'id' in their name",
     "rule": {
       "file_patterns": ["db/migrate/**/*.rb"],
       "description": "Applies to migration files under db/migrate."
@@ -197,7 +197,8 @@
     "explanation": "Ensure controllers contain minimal logic. Move heavy business logic to models, service objects, or other dedicated classes. Controllers should focus on handling requests, invoking necessary services, and rendering responses.",
     "rule": {
       "file_patterns": ["app/controllers/**/*.rb"],
-      "description": "Applies to controllers under app/controllers."
+      "exclude_patterns": ["app/controllers/concerns/**/*.rb"],
+      "description": "Applies to controllers under app/controllers, excluding files in app/controllers/concerns."
     }
   },
   {
@@ -261,7 +262,7 @@
   },
   {
     "code_name": "Use Instance vs. Local Variables Appropriately",
-    "explanation": "Use local variables for data that is limited to the scope of a method or block. Use instance variables when data needs to persist across multiple methods in an object instance. Minimize the use of global variables to maintain encapsulation and prevent unintended side effects.",
+    "explanation": "Use local variables for data that is limited to the scope of a method or block. Use instance variables when data needs to persist across multiple methods in an object instance. Minimize the use of global variables to maintain encapsulation and prevent unintended side effects. In javascript variables such window.selected_id is considered global and should not be referenced by this rule.",
     "rule": {
       "file_patterns": ["**/*.rb", "**/*.js", "**/*.js.coffee"],
       "exclude_patterns": ["db/migrate/**/*.rb"],
