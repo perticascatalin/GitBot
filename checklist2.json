@@ -33,7 +33,7 @@
   },
   {
     "code_name": "CSS Styling Indentation Under Body Tag",
-    "explanation": "Ensure CSS styling is indented under a body tag.",
+    "explanation": "Ensure CSS styling is indented under a body tag. Sometimes the body tag might not be visible in the code hunk / diff. Then you can leave only a warning.",
     "rule": {
       "file_patterns": ["**/*.sass", "**/*.scss", "**/*.css"],
       "description": "Applies to stylesheet files."
