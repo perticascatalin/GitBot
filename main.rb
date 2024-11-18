@@ -16,7 +16,7 @@ pull_number = 45142
 repo_analysis = RepoAnalysis.new('data/pull_requests')
 pull_request = repo_analysis.pull_request_data(pull_number)
 filenames = repo_analysis.pull_request_files(pull_number)
-rules = JSON.parse(File.read('checklist2.json'))
+rules = JSON.parse(File.read('checklist.json'))
 results = ReviewHelper.find_applicable_rules(filenames, rules)
 prompt = ReviewHelper.pull_request_review_prompt(pull_request, results, rules)
 
