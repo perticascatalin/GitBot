@@ -36,6 +36,15 @@ class RepoAnalysis
     data.map { |item| item['filename'] }
   end
 
+  def pull_request_file_sha(pull_number)
+    file = read_data_file(pull_number)
+    data = JSON.parse(file)
+    result = data.each_with_object({}) do |item, hash|
+      sha = item['blob_url'].match(%r{https://github.com/[^/]+/[^/]+/blob/([^/]+)/})[1] rescue nil
+      hash[item['filename']] = sha
+    end
+  end
+
   def analyze_reviews
     user_count = Hash.new(0)
     file_count = Hash.new(0)
