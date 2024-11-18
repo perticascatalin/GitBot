@@ -1,4 +1,4 @@
-       Task 1 completed!
+        Task 1 completed!
         Task: Take a look at this code diff:class AddSelectedCourseIdToTournaments2 < ActiveRecord::Migration[5.1]
   def change
     add_column :tournaments2_specs, :selected_course_id, :decimal, precision: 22, scale: 0

@@ -9,10 +9,6 @@ require_relative 'repo_utils/github_helper'
 require_relative 'repo_utils/repo_analysis'
 require_relative 'repo_utils/review_helper'
 
-# pull_number = 45142
-# github_helper = GitHubHelper.new('config.json')
-# github_helper.download_pull_request(pull_number)
-
 pull_number = 2
 github_helper = GitHubHelper.new('test_config.json')
 github_helper.download_pull_request(pull_number)

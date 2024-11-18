@@ -11,7 +11,9 @@ require_relative 'repo_utils/repo_analysis'
 require_relative 'repo_utils/review_helper'
 
 config = JSON.parse(File.read('config.json'))
-pull_number = 45142
+pull_number = 45471
+github_helper = GitHubHelper.new('config.json')
+github_helper.download_pull_request(pull_number)
 
 repo_analysis = RepoAnalysis.new('data/pull_requests')
 pull_request = repo_analysis.pull_request_data(pull_number)
