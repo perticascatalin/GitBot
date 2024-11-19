@@ -18,8 +18,29 @@ class GitHubHelper
     pull_request_request(pull_number)
   end
 
+  def post_comments_for_review(pull_number, run_number, file_sha)
+    reviews = JSON.parse(File.read("results/#{pull_number}/run_#{run_number}.json"))
+    reviews.each do |filename, review|
+      comments = review['not_adhered_to']
+      sha = file_sha[filename]
+      comments.each do |comment|
+        codename = comment['codename']
+        motivation = comment['motivation']
+        code_block = comment['code_block']
+
+        comment_body = "**#{codename}**\n\n"
+        comment_body += "#{motivation}\n\n"
+        comment_body += "```\n"
+        comment_body += (code_block + "\n")
+        comment_body += "```\n"
+
+        github_helper.post_comment(pull_number, sha, filename, comment_body)
+      end
+    end
+  end
+
   def post_comment(pull_number, sha, filename, comment)
-    puts "Posting comment to #{pull_number}"
+    puts "Posting comment to pull request number #{pull_number}"
     post_comment_request(pull_number, sha, filename, comment)
   end
 
