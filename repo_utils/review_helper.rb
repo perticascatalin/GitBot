@@ -46,6 +46,32 @@ module ReviewHelper
     prompt
   end
 
+  def self.get_pull_request_review_response(config_path, pull_number, prompt)
+    config = JSON.parse(File.read(config_path))
+    api_key = config['OPENAI_API_KEY2']
+    uri = URI('https://api.openai.com/v1/chat/completions')
+    headers = {
+      "Content-Type" => "application/json",
+      "Authorization" => "Bearer #{api_key}"
+    }
+    body = {
+      model: "o1-preview",
+      max_completion_tokens: 30000,
+      # model: "gpt-4o",
+      # max_tokens: 10000,
+      messages: [{ role: "user", content: prompt }]
+    }
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.open_timeout = 300
+    http.read_timeout = 300
+
+    request = Net::HTTP::Post.new(uri.request_uri, headers)
+    request.body = body.to_json
+    response = http.request(request)
+  end
+
   # TODO: Need to specify location of output
   def self.save_pull_request_review(response)
     if match = input_string.match(/```json\n(.*?)```/m)
