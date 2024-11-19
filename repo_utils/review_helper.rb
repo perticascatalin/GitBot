@@ -45,4 +45,17 @@ module ReviewHelper
 
     prompt
   end
+
+  # TODO: Need to specify location of output
+  def self.save_pull_request_review(response)
+    if match = input_string.match(/```json\n(.*?)```/m)
+      json_content = match[1]
+      md_content = input_string.sub(match[0], '').strip
+
+      File.open("output.json", "w") { |file| file.write(json_content) }
+      File.open("output.md", "w") { |file| file.write(md_content) }
+    else
+      puts "No JSON content found"
+    end
+  end
 end
