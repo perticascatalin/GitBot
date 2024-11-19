@@ -34,7 +34,7 @@ class GitHubHelper
         comment_body += (code_block + "\n")
         comment_body += "```\n"
 
-        github_helper.post_comment(pull_number, sha, filename, comment_body)
+        post_comment(pull_number, sha, filename, comment_body)
       end
     end
   end

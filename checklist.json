@@ -284,5 +284,13 @@
       "file_patterns": ["Gemfile", "Gemfile.lock"],
       "description": "Applies to Gemfile and Gemfile.lock."
     }
+  },
+  {
+    "code_name": "Merge Conflict Inappropriately Fixed",
+    "explanation": "Ensure that merge conflict markers such as <<<<<<< HEAD, =======, and >>>>>>> branch_name do not exist in the code. These markers indicate an unresolved merge conflict and should be fully resolved before committing.",
+    "rule": {
+      "file_patterns": ["**/*"],
+      "description": "Applies to all files."
+    }
   }
 ]
