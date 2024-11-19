@@ -47,6 +47,7 @@ module ReviewHelper
   end
 
   def self.get_pull_request_review_response(config_path, pull_number, prompt)
+    puts "Reviewing pull request number #{pull_number}"
     config = JSON.parse(File.read(config_path))
     api_key = config['OPENAI_API_KEY2']
     uri = URI('https://api.openai.com/v1/chat/completions')
@@ -70,16 +71,26 @@ module ReviewHelper
     request = Net::HTTP::Post.new(uri.request_uri, headers)
     request.body = body.to_json
     response = http.request(request)
+    JSON.parse(response.body)["choices"][0]["message"]["content"]
   end
 
-  # TODO: Need to specify location of output
-  def self.save_pull_request_review(response)
-    if match = input_string.match(/```json\n(.*?)```/m)
-      json_content = match[1]
-      md_content = input_string.sub(match[0], '').strip
+  def self.save_pull_request_review(pull_number, response)
+    dir_path = File.join('results', pull_number.to_s)
+    FileUtils.mkdir_p(dir_path) unless Dir.exist?(dir_path)
 
-      File.open("output.json", "w") { |file| file.write(json_content) }
-      File.open("output.md", "w") { |file| file.write(md_content) }
+    if match = response.match(/```json\n(.*?)```/m)
+      json_content = match[1]
+      md_content = response.sub(match[0], '').strip
+
+      existing_files = Dir.entries(dir_path).select { |f| f =~ /^run_(\d+)\.(json|md)$/ }
+      numbers = existing_files.map { |f| f[/run_(\d+)\./, 1].to_i }
+      next_number = (numbers.max || 0) + 1
+
+      json_file_path = File.join(dir_path, "run_#{next_number}.json")
+      md_file_path = File.join(dir_path, "run_#{next_number}.md")
+
+      File.open(json_file_path, "w") { |file| file.write(json_content) }
+      File.open(md_file_path, "w") { |file| file.write(md_content) }
     else
       puts "No JSON content found"
     end

@@ -1,10 +1,10 @@
-# main.rb
 require 'awesome_print'
+require 'fileutils'
 require 'net/http'
-require 'uri'
-require 'json'
-require 'pry'
 require 'date'
+require 'json'
+require 'uri'
+require 'pry'
 
 require_relative 'repo_utils/github_helper'
 require_relative 'repo_utils/repo_analysis'
@@ -23,8 +23,4 @@ results = ReviewHelper.find_applicable_rules(filenames, rules)
 prompt = ReviewHelper.pull_request_review_prompt(pull_request, results, rules)
 response = ReviewHelper.get_pull_request_review_response('config.json', pull_number, prompt)
 
-puts "Response from ChatGPT:"
-output = JSON.parse(response.body)
-puts output["choices"][0]["message"]["content"]
-
-binding.pry
+ReviewHelper.save_pull_request_review(pull_number, response)
