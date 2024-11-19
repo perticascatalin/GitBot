@@ -37,7 +37,7 @@ def read_files_in_directory(directory_path):
     return all_files_content
 
 def run_experiment(hunks):
-    agents_file = open('agents.json')
+    agents_file = open('docs/agents.json')
     agents = json.load(agents_file)
     verbosity = True
 
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     app.run(port=8000)
 
 # # Specify the directory path
-# directory_path = './samples'
+# directory_path = './docs/samples'
 
 # # Get the concatenated content of all files in the directory
 # hunks = read_files_in_directory(directory_path)
