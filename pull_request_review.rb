@@ -10,7 +10,7 @@ require_relative 'repo_utils/github_helper'
 require_relative 'repo_utils/repo_analysis'
 require_relative 'repo_utils/review_helper'
 
-pull_number = 45481
+pull_number = 45516
 run_number = 1
 
 github_helper = GitHubHelper.new('config.json')
@@ -28,5 +28,5 @@ prompt = ReviewHelper.pull_request_review_prompt(pull_request, results, rules)
 response = ReviewHelper.get_pull_request_review_response('config.json', pull_number, prompt)
 
 ReviewHelper.save_pull_request_review(pull_number, response)
-github_helper.post_comments_for_review(pull_number, run_number, file_sha)
+# github_helper.post_comments_for_review(pull_number, run_number, file_sha)
 
