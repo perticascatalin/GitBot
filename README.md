@@ -12,11 +12,6 @@ ruby webhook_server.rb
 
 ### GitHub Helper
 
-Uses the Git API to do the following:
-
-- Download the review comments for a repository
-- Download the diff of a given pull request
-
 Setup steps:
 
 - Create config.json file
@@ -24,6 +19,12 @@ Setup steps:
   - "repo_owner" - repository owner
   - "repo_name" - repository name
   - "github_token" - needed if the repository is private
+
+Uses the Git API to do the following:
+
+- Download the review comments for a repository
+- Download the diff of a given pull request
+
 
 ```ruby
 require_relative 'repo_utils/github_helper'
@@ -37,6 +38,19 @@ github_helper.download_pull_request(pull_number)
 ```
 
 ### Repo Analysis
+
+Extracts data for analysis:
+
+- Review comments
+  - View all reviews from a given page
+  - View all reviews for a given file
+  - Analysis
+    - Number of comments per user
+    - Number of comments per file
+    - Number of comments per user and file
+- Pull Request diffs
+  - Array of hashes with "filename" and "patch" keys
+
 
 ```ruby
 require_relative 'repo_utils/repo_analysis'
