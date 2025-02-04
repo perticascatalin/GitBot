@@ -68,6 +68,8 @@ files = repo_analysis.pull_request_files(pull_number)
 
 ### Review Helper
 
+TODO: sample usage
+
 Methods:
 
 #### find_applicable_rules

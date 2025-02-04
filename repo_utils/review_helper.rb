@@ -95,4 +95,11 @@ module ReviewHelper
       puts "No JSON content found"
     end
   end
+
+  def self.page_reviews_extract_rules_prompt()
+    prompt = "Given the following code review comments and diff hunks, extract a set of coding rules following this JSON format:\n\n"
+    prompt += "{\n  \"code_name\": \"<short descriptive name>\",\n  \"explanation\": \"<detailed explanation of the rule, including why it matters>\",\n  \"rule\": {\n    \"file_patterns\": [\"<glob pattern(s)>\"],\n    \"description\": \"<description of where or how the rule applies>\"\n  },\n  \"example\": {\n    \"diff_hunk\": \"<exact diff hunk showing the issue>\",\n    \"comment\": \"<the review comment or suggestion>\",\n    \"user\": \"<username of the reviewer>\",\n    \"date\": \"<date of the review>\"\n  },\n  \"count\": <number of times this rule was encountered>\n}\n\n"
+    prompt += "The rules should be derived from actionable, clear suggestions that improve code quality, maintainability, security, or performance. Consider comments with specific change recommendations, comments highlighting recurring issues, and ones that include detailed diff hunks as the most relevant. Process the provided review comments and output a JSON list of the extracted rules."
+    return prompt
+  end
 end
