@@ -1,6 +1,8 @@
 class RepoAnalysis
-  def initialize(data_directory)
+  def initialize(data_directory, config_excluded)
     @data_directory = data_directory
+    raise "File not found: #{config_excluded}" unless File.exist?(config_excluded)
+    @excluded_files = JSON.parse(File.read(config_excluded)).map{|d| d["name"]}
   end
 
   def view_page_reviews(page)
@@ -26,19 +28,19 @@ class RepoAnalysis
 
   def pull_request_data(pull_number)
     file = read_data_file(pull_number)
-    data = JSON.parse(file)
+    data = extract_pull_request(file)
     data.map { |item| item.slice('filename', 'patch') }
   end
 
   def pull_request_files(pull_number)
     file = read_data_file(pull_number)
-    data = JSON.parse(file)
+    data = extract_pull_request(file)
     data.map { |item| item['filename'] }
   end
 
   def pull_request_file_sha(pull_number)
     file = read_data_file(pull_number)
-    data = JSON.parse(file)
+    data = extract_pull_request(file)
     result = data.each_with_object({}) do |item, hash|
       sha = item['blob_url'].match(%r{https://github.com/[^/]+/[^/]+/blob/([^/]+)/})[1] rescue nil
       hash[item['filename']] = sha
@@ -101,6 +103,11 @@ class RepoAnalysis
     raise "File not found: #{file_path}" unless File.exist?(file_path)
 
     File.read(file_path)
+  end
+
+  def extract_pull_request(file)
+    data = JSON.parse(file)
+    data.reject{|d| @excluded_files.include?(d["filename"])}
   end
 
   def print_cmt_data(cmt_data)
