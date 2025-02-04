@@ -94,9 +94,9 @@ The method **find_applicable_rules** looks at a pull request diff and determines
 
 This method creates a prompt for an automated code review using the pull request data and the applicable rules.
 
-#### get_pull_request_review_response
+#### get_prompt_response
 
-This method creates a request for an automated code review and sends it to the OpenAI API.
+This method creates a request for an automated code review and sends it to the OpenAI API. TBD changes
 
 #### save_pull_request_review
 

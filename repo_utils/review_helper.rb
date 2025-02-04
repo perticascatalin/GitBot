@@ -46,8 +46,16 @@ module ReviewHelper
     prompt
   end
 
-  def self.get_pull_request_review_response(config_path, pull_number, prompt)
-    puts "Reviewing pull request number #{pull_number}"
+  def self.page_reviews_extract_rules_prompt(page_number)
+    prompt = "Given the following code review comments and diff hunks, extract a set of coding rules following this JSON format and include the pull request where the comments in extracted the examples were left as additional fields in the json:\n\n"
+    prompt += "{\n  \"code_name\": \"<short descriptive name>\",\n  \"explanation\": \"<detailed explanation of the rule, including why it matters>\",\n  \"rule\": {\n    \"file_patterns\": [\"<glob pattern(s)>\"],\n    \"description\": \"<description of where or how the rule applies>\"\n  },\n  \"example\": {\n    \"diff_hunk\": \"<exact diff hunk showing the issue>\",\n    \"comment\": \"<the review comment or suggestion>\",\n    \"user\": \"<username of the reviewer>\",\n    \"date\": \"<date of the review>\"\n  },\n  \"count\": <number of times this rule was encountered>\n}\n\n"
+    prompt += "The rules should be derived from actionable, clear suggestions that improve code quality, maintainability, security, or performance. Consider comments with specific change recommendations, comments highlighting recurring issues, and ones that include detailed diff hunks as the most relevant. Process the provided review comments and output a JSON list of the extracted rules."
+    prompt += JSON.parse(File.read(File.join("data/reviews/","#{page_number}.json"))).to_s
+    return prompt
+  end
+
+  def self.get_prompt_response(config_path, prompt_id, prompt)
+    puts "Reviewing prompt with id #{prompt_id}"
     config = JSON.parse(File.read(config_path))
     api_key = config['OPENAI_API_KEY2']
     uri = URI('https://api.openai.com/v1/chat/completions')
@@ -60,7 +68,7 @@ module ReviewHelper
       max_completion_tokens: 30000,
       # model: "gpt-4o",
       # max_tokens: 10000,
-      messages: [{ role: "user", content: prompt }]
+      messages: [{ role: "user", content: prompt.truncate(100000) }]
     }
 
     http = Net::HTTP.new(uri.host, uri.port)
@@ -96,10 +104,10 @@ module ReviewHelper
     end
   end
 
-  def self.page_reviews_extract_rules_prompt()
-    prompt = "Given the following code review comments and diff hunks, extract a set of coding rules following this JSON format:\n\n"
-    prompt += "{\n  \"code_name\": \"<short descriptive name>\",\n  \"explanation\": \"<detailed explanation of the rule, including why it matters>\",\n  \"rule\": {\n    \"file_patterns\": [\"<glob pattern(s)>\"],\n    \"description\": \"<description of where or how the rule applies>\"\n  },\n  \"example\": {\n    \"diff_hunk\": \"<exact diff hunk showing the issue>\",\n    \"comment\": \"<the review comment or suggestion>\",\n    \"user\": \"<username of the reviewer>\",\n    \"date\": \"<date of the review>\"\n  },\n  \"count\": <number of times this rule was encountered>\n}\n\n"
-    prompt += "The rules should be derived from actionable, clear suggestions that improve code quality, maintainability, security, or performance. Consider comments with specific change recommendations, comments highlighting recurring issues, and ones that include detailed diff hunks as the most relevant. Process the provided review comments and output a JSON list of the extracted rules."
-    return prompt
+  def self.save_derived_rules(page_number, response)
+    dir_path = 'derived_rules'
+    FileUtils.mkdir_p(dir_path) unless Dir.exist?(dir_path)
+    json_file_path = File.join(dir_path, "#{page_number}.json")
+    File.open(json_file_path, "w") { |file| file.write(response) }
   end
 end
