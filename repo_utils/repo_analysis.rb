@@ -16,14 +16,19 @@ class RepoAnalysis
 
   def view_file_reviews(file_path)
     num_pages = total_pages
+    file_data = []
 
     (1..num_pages).each do |page|
       file = read_data_file(page)
       data = JSON.parse(file)
       data.each do |cmt|
-        print_cmt_data(cmt) if cmt['path'] == file_path
+        if cmt['path'] == file_path
+          print_cmt_data(cmt)
+          file_data.append(cmt)
+        end
       end
     end
+    file_data
   end
 
   def pull_request_data(pull_number)
@@ -112,6 +117,8 @@ class RepoAnalysis
 
   def print_cmt_data(cmt_data)
     puts cmt_data['path']
+    puts '===================================='
+    ap cmt_data['diff_hunk']
     puts '===================================='
     ap cmt_data['body']
     puts '===================================='
