@@ -72,23 +72,42 @@ class GitHubHelper
   end
 
   def pull_request_request(pull_number)
-    uri = URI.parse("https://api.github.com/repos/#{@repo_owner}/#{@repo_name}/pulls/#{pull_number}/files")
-    request = Net::HTTP::Get.new(uri)
-    request['Accept'] = 'application/vnd.github+json'
-    request['Authorization'] = @config['github_token']
-    request['X-Github-Api-Version'] = '2022-11-28'
+    all_data = []
+    url = "https://api.github.com/repos/#{@repo_owner}/#{@repo_name}/pulls/#{pull_number}/files?per_page=100"
 
-    req_options = {
-      use_ssl: uri.scheme == 'https'
-    }
+    loop do
+      uri = URI.parse(url)
+      request = Net::HTTP::Get.new(uri)
+      request['Accept'] = 'application/vnd.github+json'
+      request['Authorization'] = @config['github_token']
+      request['X-Github-Api-Version'] = '2022-11-28'
 
-    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-      http.request(request)
+      req_options = { use_ssl: uri.scheme == 'https' }
+
+      response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+        http.request(request)
+      end
+
+      data = JSON.parse(response.body)
+      all_data.concat(data)
+
+      link_header = response['link']
+      if link_header && link_header.include?('rel="next"')
+        next_url_match = link_header.match(/<([^>]+)>;\s*rel="next"/)
+        if next_url_match
+          url = next_url_match[1]
+        else
+          break
+        end
+      else
+        # No more pages
+        break
+      end
     end
 
-    data = JSON.parse(response.body)
-    save_to_file('pull_requests', pull_number, data)
+    save_to_file('pull_requests', pull_number, all_data)
   end
+
 
   def post_comment_request(pull_number, sha, filename, comment)
     uri = URI.parse("https://api.github.com/repos/#{@repo_owner}/#{@repo_name}/pulls/#{pull_number}/comments")
